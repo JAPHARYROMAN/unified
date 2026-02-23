@@ -1,0 +1,739 @@
+// Prisma schema for Unified Orchestrator
+// ─── Datasource & Generator ───
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Placeholder model ───
+
+model HealthCheck {
+  id        Int      @id @default(autoincrement())
+  status    String   @default("ok")
+  checkedAt DateTime @default(now()) @map("checked_at")
+
+  @@map("health_checks")
+}
+
+// ─── Partner Onboarding ───
+
+enum PartnerStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  REJECTED
+  VERIFIED
+  ACTIVE
+  SUSPENDED
+
+  @@map("partner_status")
+}
+
+model Partner {
+  id                 String        @id @default(uuid()) @db.Uuid
+  legalName          String        @map("legal_name")
+  jurisdictionCode   Int           @map("jurisdiction_code")
+  licenseId          String?       @map("license_id")
+  registrationNumber String        @map("registration_number")
+  complianceEmail    String        @map("compliance_email")
+  treasuryWallet     String        @map("treasury_wallet")
+  status             PartnerStatus @default(DRAFT)
+  rejectionReason    String?       @map("rejection_reason")
+  maxLoanSizeUsdc    BigInt        @default(0) @map("max_loan_size_usdc")
+  reserveRatioBps    Int           @default(0) @map("reserve_ratio_bps")
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+
+  submissions PartnerSubmission[]
+  apiKeys     PartnerApiKey[]
+  pools       PartnerPool[]
+  loans       Loan[]
+  guardrails  PartnerGuardrail[]
+
+  @@map("partners")
+}
+
+model PartnerSubmission {
+  id               String    @id @default(uuid()) @db.Uuid
+  partnerId        String    @map("partner_id") @db.Uuid
+  submittedPayload Json      @map("submitted_payload")
+  submittedAt      DateTime  @default(now()) @map("submitted_at")
+  reviewedAt       DateTime? @map("reviewed_at")
+  reviewedBy       String?   @map("reviewed_by")
+  notes            String?
+
+  partner Partner @relation(fields: [partnerId], references: [id])
+
+  @@map("partner_submissions")
+}
+
+// ─── Partner API Keys ───
+
+model PartnerApiKey {
+  id        String    @id @default(uuid()) @db.Uuid
+  partnerId String    @map("partner_id") @db.Uuid
+  keyHash   String    @map("key_hash")
+  last4     String
+  createdAt DateTime  @default(now()) @map("created_at")
+  revokedAt DateTime? @map("revoked_at")
+
+  partner Partner @relation(fields: [partnerId], references: [id])
+
+  @@index([keyHash])
+  @@map("partner_api_keys")
+}
+
+// ─── Partner Pools ───
+
+model PartnerPool {
+  id           String   @id @default(uuid()) @db.Uuid
+  partnerId    String   @map("partner_id") @db.Uuid
+  poolContract String   @map("pool_contract")
+  chainId      Int      @map("chain_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  partner  Partner   @relation(fields: [partnerId], references: [id])
+  tranches Tranche[]
+
+  @@map("partner_pools")
+}
+
+// ─── Loans ───
+
+enum LoanStatus {
+  CREATED
+  FUNDING
+  ACTIVE
+  REPAID
+  DEFAULTED
+  CLOSED
+  FAILED
+
+  @@map("loan_status")
+}
+
+model Loan {
+  id               String     @id @default(uuid()) @db.Uuid
+  partnerId        String     @map("partner_id") @db.Uuid
+  borrowerWallet   String     @map("borrower_wallet")
+  principalUsdc    BigInt     @map("principal_usdc")
+  collateralToken  String     @map("collateral_token")
+  collateralAmount BigInt     @map("collateral_amount")
+  durationSeconds  Int        @map("duration_seconds")
+  interestRateBps  Int        @map("interest_rate_bps")
+  status           LoanStatus @default(CREATED)
+  loanContract     String?    @map("loan_contract")
+  poolContract     String?    @map("pool_contract")
+  chainId          Int?       @map("chain_id")
+  createdAt        DateTime   @default(now()) @map("created_at")
+  updatedAt        DateTime   @updatedAt @map("updated_at")
+
+  partner              Partner               @relation(fields: [partnerId], references: [id])
+  chainActions         ChainAction[]
+  fiatTransfers        FiatTransfer[]
+  installmentSchedule  InstallmentSchedule?
+  trancheAllocations   TrancheLoanAllocation[]
+
+  @@index([partnerId])
+  @@map("loans")
+}
+
+// ─── Chain Action Queue ───
+
+enum ChainActionType {
+  CREATE_LOAN
+  FUND_LOAN
+  ACTIVATE_LOAN
+  CONFIGURE_SCHEDULE
+  RECORD_DISBURSEMENT
+  REPAY
+  RECORD_REPAYMENT
+
+  @@map("chain_action_type")
+}
+
+enum ChainActionStatus {
+  QUEUED
+  PROCESSING
+  SENT
+  RETRYING
+  MINED
+  FAILED
+  DLQ
+
+  @@map("chain_action_status")
+}
+
+model ChainAction {
+  id                    String            @id @default(uuid()) @db.Uuid
+  loanId                String            @map("loan_id") @db.Uuid
+  type                  ChainActionType
+  status                ChainActionStatus @default(QUEUED)
+  payload               Json
+  actionKey             String?           @unique @map("action_key")
+  contractAddress       String?           @map("contract_address")
+  functionName          String?           @map("function_name")
+  encodedParamsHash     String?           @map("encoded_params_hash")
+  txHash                String?           @map("tx_hash")
+  nonce                 Int?
+  bumpCount             Int               @default(0) @map("bump_count")
+  error                 String?
+  revertReason          String?           @map("revert_reason")
+  blockNumber           Int?              @map("block_number")
+  gasUsed               BigInt?           @map("gas_used")
+  confirmationsRequired Int               @default(1) @map("confirmations_required")
+  confirmationsReceived Int               @default(0) @map("confirmations_received")
+  attempts              Int               @default(0)
+  nextRetryAt           DateTime?         @map("next_retry_at")
+  sentAt                DateTime?         @map("sent_at")
+  minedAt               DateTime?         @map("mined_at")
+  dlqAt                 DateTime?         @map("dlq_at")
+  createdAt             DateTime          @default(now()) @map("created_at")
+  updatedAt             DateTime          @updatedAt @map("updated_at")
+
+  loan Loan @relation(fields: [loanId], references: [id])
+  fiatTransfers FiatTransfer[]
+
+  @@index([status, nextRetryAt])
+  @@index([status, sentAt])
+  @@index([status, dlqAt])
+  @@map("chain_actions")
+}
+
+// ─── Partner Guardrails ───
+
+model PartnerGuardrail {
+  id                         String    @id @default(uuid()) @db.Uuid
+  partnerId                  String    @map("partner_id") @db.Uuid
+  minAprBps                  Int       @map("min_apr_bps")
+  maxAprBps                  Int       @map("max_apr_bps")
+  minDurationSec             Int       @map("min_duration_sec")
+  maxDurationSec             Int       @map("max_duration_sec")
+  maxLoanUsdc                BigInt    @map("max_loan_usdc")
+  maxBorrowerOutstandingUsdc BigInt    @map("max_borrower_outstanding_usdc")
+  minReserveRatioBps         Int       @map("min_reserve_ratio_bps")
+  effectiveFrom              DateTime  @default(now()) @map("effective_from")
+  effectiveTo                DateTime? @map("effective_to")
+  createdAt                  DateTime  @default(now()) @map("created_at")
+
+  partner Partner @relation(fields: [partnerId], references: [id])
+
+  @@index([partnerId, effectiveTo])
+  @@map("partner_guardrails")
+}
+
+// ─── Fiat Transfers ───
+
+enum FiatTransferDirection {
+  OUTBOUND
+  INBOUND
+
+  @@map("fiat_transfer_direction")
+}
+
+enum FiatTransferStatus {
+  // Shared
+  PENDING
+  FAILED
+
+  // Disbursement (OUTBOUND) states
+  PAYOUT_INITIATED
+  PAYOUT_CONFIRMED
+  CHAIN_RECORD_PENDING
+  CHAIN_RECORDED
+  ACTIVATED
+
+  // Repayment (INBOUND) states
+  REPAYMENT_RECEIVED
+  CHAIN_REPAY_PENDING
+  CHAIN_REPAY_CONFIRMED
+
+  // Legacy / generic
+  CONFIRMED
+  APPLIED_ONCHAIN
+
+  @@map("fiat_transfer_status")
+}
+
+model FiatTransfer {
+  id          String                 @id @default(uuid()) @db.Uuid
+  loanId      String                 @map("loan_id") @db.Uuid
+  provider    String                 @default("UNKNOWN")
+  direction   FiatTransferDirection
+  status      FiatTransferStatus     @default(PENDING)
+  providerRef String                 @map("provider_ref")
+  idempotencyKey String             @unique @map("idempotency_key")
+  amountKes   BigInt                 @map("amount_kes")
+  phoneNumber String                 @map("phone_number")
+  refHash     String?                @map("ref_hash")
+  proofHash   String?                @map("proof_hash")
+  rawPayload  Json?                  @map("raw_payload")
+  confirmedAt DateTime?              @map("confirmed_at")
+  appliedOnchainAt DateTime?         @map("applied_onchain_at")
+  chainActionId String?              @map("chain_action_id") @db.Uuid
+  failedAt    DateTime?              @map("failed_at")
+  failureReason String?              @map("failure_reason")
+  webhookTimestamp DateTime?         @map("webhook_timestamp")
+  createdAt   DateTime               @default(now()) @map("created_at")
+  updatedAt   DateTime               @updatedAt @map("updated_at")
+
+  loan Loan @relation(fields: [loanId], references: [id])
+  chainAction ChainAction? @relation(fields: [chainActionId], references: [id])
+
+  @@index([loanId])
+  @@index([status, provider])
+  @@index([chainActionId])
+  @@index([providerRef])
+  @@index([idempotencyKey])
+  @@map("fiat_transfers")
+}
+
+// ─── Signer Nonce Tracking ───
+
+model SignerNonce {
+  id           String   @id @default(uuid()) @db.Uuid
+  signerAddress String  @unique @map("signer_address")
+  chainId      Int      @map("chain_id")
+  nonce        Int
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("signer_nonces")
+}
+
+// ─── Webhook Dead-Letter Queue ───
+
+// ─── Webhook Nonce / Replay Guard ───
+
+model WebhookNonce {
+  id           String   @id @default(uuid()) @db.Uuid
+  nonce        String   @unique
+  source       String
+  receivedAt   DateTime @default(now()) @map("received_at")
+
+  @@index([source, receivedAt])
+  @@map("webhook_nonces")
+}
+
+model WebhookDeadLetter {
+  id          String   @id @default(uuid()) @db.Uuid
+  source      String
+  eventType   String   @map("event_type")
+  rawBody     String   @map("raw_body")
+  failReason  String   @map("fail_reason")
+  headers     Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([source, createdAt])
+  @@map("webhook_dead_letters")
+}
+
+// ─── Installment Engine ───
+
+enum InstallmentStatus {
+  PENDING
+  DUE
+  PAID
+  PARTIALLY_PAID
+  DELINQUENT
+  DEFAULTED
+  WAIVED
+
+  @@map("installment_status")
+}
+
+enum AccrualStatus {
+  CURRENT
+  IN_GRACE
+  DELINQUENT
+  DEFAULT_CANDIDATE
+  DEFAULTED
+
+  @@map("accrual_status")
+}
+
+model InstallmentSchedule {
+  id                      String   @id @default(uuid()) @db.Uuid
+  loanId                  String   @unique @map("loan_id") @db.Uuid
+  scheduleHash            String   @map("schedule_hash")
+  scheduleJson            String   @map("schedule_json") @db.Text
+  totalInstallments       Int      @map("total_installments")
+  principalPerInstallment BigInt   @map("principal_per_installment")
+  interestRateBps         Int      @map("interest_rate_bps")
+  penaltyAprBps           Int      @default(0) @map("penalty_apr_bps")
+  gracePeriodSeconds      Int      @default(0) @map("grace_period_seconds")
+  intervalSeconds         Int      @map("interval_seconds")
+  startTimestamp          BigInt   @map("start_timestamp")
+  createdAt               DateTime @default(now()) @map("created_at")
+
+  loan         Loan                @relation(fields: [loanId], references: [id])
+  installments InstallmentEntry[]
+
+  @@map("installment_schedules")
+}
+
+model InstallmentEntry {
+  id               String            @id @default(uuid()) @db.Uuid
+  scheduleId       String            @map("schedule_id") @db.Uuid
+  loanId           String            @map("loan_id") @db.Uuid
+  installmentIndex Int               @map("installment_index")
+  dueTimestamp     BigInt            @map("due_timestamp")
+  dueDate          DateTime          @map("due_date")
+  principalDue     BigInt            @map("principal_due")
+  interestDue      BigInt            @map("interest_due")
+  totalDue         BigInt            @map("total_due")
+  principalPaid  BigInt            @default(0) @map("principal_paid")
+  interestPaid   BigInt            @default(0) @map("interest_paid")
+  lateFeeAccrued  BigInt            @default(0) @map("late_fee_accrued")
+  penaltyAccrued  BigInt            @default(0) @map("penalty_accrued")
+  status          InstallmentStatus @default(PENDING)
+  accrualStatus   AccrualStatus     @default(CURRENT) @map("accrual_status")
+  daysPastDue     Int               @default(0) @map("days_past_due")
+  paidAt          DateTime?         @map("paid_at")
+  delinquentSince DateTime?         @map("delinquent_since")
+  delinquentDays  Int               @default(0) @map("delinquent_days")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  schedule        InstallmentSchedule @relation(fields: [scheduleId], references: [id])
+  accrualSnapshots AccrualSnapshot[]
+
+  @@unique([scheduleId, installmentIndex])
+  @@index([loanId, status])
+  @@index([loanId, accrualStatus])
+  @@index([dueDate, status])
+  @@map("installment_entries")
+}
+
+/// Idempotency record — one row per (entryId, hourBucket).
+/// Prevents double-accrual when the hourly job runs multiple times.
+model AccrualSnapshot {
+  id           String   @id @default(uuid()) @db.Uuid
+  entryId      String   @map("entry_id") @db.Uuid
+  loanId       String   @map("loan_id") @db.Uuid
+  hourBucket   DateTime @map("hour_bucket")
+  daysPastDue  Int      @map("days_past_due")
+  penaltyDelta BigInt   @map("penalty_delta")
+  accrualStatus AccrualStatus @map("accrual_status")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  entry InstallmentEntry @relation(fields: [entryId], references: [id])
+
+  @@unique([entryId, hourBucket])
+  @@index([loanId, hourBucket])
+  @@map("accrual_snapshots")
+}
+
+// ─── Reconciliation Reports & Drift Incidents ───
+
+enum ReconReportScope {
+  POOL
+  GLOBAL
+
+  @@map("recon_report_scope")
+}
+
+enum SettlementCheckKind {
+  FIAT_CONFIRMED_NO_CHAIN
+  CHAIN_RECORD_NO_FIAT
+  ACTIVE_MISSING_DISBURSEMENT
+
+  @@map("settlement_check_kind")
+}
+
+enum DriftKind {
+  ROUNDING_DRIFT
+  TIMING_DRIFT
+  SCHEDULE_HASH_MISMATCH
+  ACCRUAL_DOUBLE_CHARGE
+
+  @@map("drift_kind")
+}
+
+enum ReconIncidentSeverity {
+  CRITICAL
+  HIGH
+  MEDIUM
+
+  @@map("recon_incident_severity")
+}
+
+enum ReconIncidentStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+
+  @@map("recon_incident_status")
+}
+
+/// Daily reconciliation report — one row per (date, scope, poolId?).
+model ReconReport {
+  id                       String           @id @default(uuid()) @db.Uuid
+  reportDate               DateTime         @map("report_date") @db.Date
+  scope                    ReconReportScope
+  poolId                   String?          @map("pool_id") @db.Uuid
+  totalActiveLoans         Int              @map("total_active_loans")
+  totalPrincipalUsdc       BigInt           @map("total_principal_usdc")
+  totalInterestUsdc        BigInt           @map("total_interest_usdc")
+  totalPenaltyUsdc         BigInt           @map("total_penalty_usdc")
+  totalRepaymentsFiat      BigInt           @map("total_repayments_fiat")
+  totalRepaymentsChain     BigInt           @map("total_repayments_chain")
+  /// JSON: { "0_5": n, "6_15": n, "16_30": n, "31_plus": n }
+  delinquencyDistribution  Json             @map("delinquency_distribution")
+  /// JSON array of { loanId, partnerId, defaultedAt }
+  defaultList              Json             @map("default_list")
+  checksumSha256           String           @map("checksum_sha256")
+  reportJson               String           @map("report_json") @db.Text
+  createdAt                DateTime         @default(now()) @map("created_at")
+
+  incidents ReconIncident[]
+
+  @@unique([reportDate, scope, poolId])
+  @@index([reportDate, scope])
+  @@map("recon_reports")
+}
+
+/// Incident record — created whenever a check fails or drift exceeds tolerance.
+model ReconIncident {
+  id            String                @id @default(uuid()) @db.Uuid
+  reportId      String?               @map("report_id") @db.Uuid
+  kind          DriftKind
+  severity      ReconIncidentSeverity
+  status        ReconIncidentStatus   @default(OPEN)
+  loanId        String?               @map("loan_id") @db.Uuid
+  partnerId     String?               @map("partner_id") @db.Uuid
+  poolId        String?               @map("pool_id") @db.Uuid
+  metricValue   Float                 @map("metric_value")
+  tolerance     Float
+  detail        String
+  breakerFired  Boolean               @default(false) @map("breaker_fired")
+  resolvedAt    DateTime?             @map("resolved_at")
+  resolvedBy    String?               @map("resolved_by")
+  createdAt     DateTime              @default(now()) @map("created_at")
+  updatedAt     DateTime              @updatedAt @map("updated_at")
+
+  report ReconReport? @relation(fields: [reportId], references: [id])
+
+  @@index([kind, status])
+  @@index([loanId, status])
+  @@index([partnerId, status])
+  @@map("recon_incidents")
+}
+
+/// Per-loan settlement integrity check result — written on every realtime check.
+model SettlementCheck {
+  id          String              @id @default(uuid()) @db.Uuid
+  loanId      String              @map("loan_id") @db.Uuid
+  kind        SettlementCheckKind
+  passed      Boolean
+  detail      String?
+  checkedAt   DateTime            @default(now()) @map("checked_at")
+
+  @@index([loanId, kind])
+  @@index([kind, passed, checkedAt])
+  @@map("settlement_checks")
+}
+
+// ─── Tranche Analytics ───
+
+enum TrancheType {
+  SENIOR
+  JUNIOR
+
+  @@map("tranche_type")
+}
+
+enum TrancheStatus {
+  ACTIVE
+  DEPLETED
+  CLOSED
+
+  @@map("tranche_status")
+}
+
+/// Capital tranche within a pool — SENIOR or JUNIOR, with waterfall priority.
+model Tranche {
+  id                  String        @id @default(uuid()) @db.Uuid
+  poolId              String        @map("pool_id") @db.Uuid
+  pool                PartnerPool   @relation(fields: [poolId], references: [id])
+  trancheType         TrancheType   @map("tranche_type")
+  status              TrancheStatus @default(ACTIVE)
+
+  /// Total committed capital (USDC, 6 dec)
+  commitmentUsdc      BigInt        @map("commitment_usdc")
+  /// Currently deployed into active loans
+  deployedUsdc        BigInt        @default(0) @map("deployed_usdc")
+
+  /// NAV = deployedUsdc - defaultImpactUsdc + cumulativeYieldUsdc (backend-computed, not pure event-sourced)
+  navUsdc             BigInt        @default(0) @map("nav_usdc")
+  /// Annualised yield in bps
+  yieldBps            Int           @default(0) @map("yield_bps")
+  cumulativeYieldUsdc BigInt        @default(0) @map("cumulative_yield_usdc")
+
+  /// Outstanding principal allocated across active loans
+  exposureUsdc        BigInt        @default(0) @map("exposure_usdc")
+  /// Cumulative realised losses absorbed by this tranche
+  defaultImpactUsdc   BigInt        @default(0) @map("default_impact_usdc")
+
+  /// Waterfall loss-absorption order — lower value = absorbed last (senior=0, junior=1)
+  waterfallPriority   Int           @default(0) @map("waterfall_priority")
+
+  createdAt           DateTime      @default(now()) @map("created_at")
+  updatedAt           DateTime      @updatedAt @map("updated_at")
+
+  loanAllocations TrancheLoanAllocation[]
+  navSnapshots    TrancheNAVSnapshot[]
+
+  @@index([poolId, trancheType])
+  @@map("tranches")
+}
+
+/// Allocation of a loan's principal slice to a specific tranche.
+model TrancheLoanAllocation {
+  id            String   @id @default(uuid()) @db.Uuid
+  trancheId     String   @map("tranche_id") @db.Uuid
+  tranche       Tranche  @relation(fields: [trancheId], references: [id])
+  loanId        String   @map("loan_id") @db.Uuid
+  loan          Loan     @relation(fields: [loanId], references: [id])
+
+  /// Principal slice allocated to this tranche (USDC, 6 dec)
+  allocatedUsdc BigInt   @map("allocated_usdc")
+  /// Percentage of loan allocated here, in basis points (0–10000)
+  allocationPct Int      @map("allocation_pct")
+
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@unique([trancheId, loanId])
+  @@map("tranche_loan_allocations")
+}
+
+/// Daily NAV snapshot per tranche — idempotent, one row per (tranche, date).
+model TrancheNAVSnapshot {
+  id                String   @id @default(uuid()) @db.Uuid
+  trancheId         String   @map("tranche_id") @db.Uuid
+  tranche           Tranche  @relation(fields: [trancheId], references: [id])
+
+  /// Midnight UTC
+  snapshotDate      DateTime @map("snapshot_date") @db.Date
+  navUsdc           BigInt   @map("nav_usdc")
+  exposureUsdc      BigInt   @map("exposure_usdc")
+  yieldBps          Int      @map("yield_bps")
+  defaultImpactUsdc BigInt   @map("default_impact_usdc")
+  /// juniorBuffer / totalExposure * 10000; buffer = juniorCommitment - juniorDefaultImpact (commitment-based, NOT juniorNAV)
+  coverageRatioBps  Int      @map("coverage_ratio_bps")
+
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@unique([trancheId, snapshotDate])
+  @@index([snapshotDate])
+  @@map("tranche_nav_snapshots")
+}
+
+// ─── Circuit Breaker Engine ───
+
+enum BreakerTrigger {
+  ACTIVE_WITHOUT_DISBURSEMENT_PROOF
+  FIAT_CONFIRMED_NO_CHAIN_RECORD
+  PARTNER_DEFAULT_RATE_30D
+  PARTNER_DELINQUENCY_14D
+  POOL_LIQUIDITY_RATIO
+  POOL_NAV_DRAWDOWN_7D
+  JUNIOR_TRANCHE_DEPLETION
+  SENIOR_TRANCHE_DRAWDOWN
+
+  @@map("breaker_trigger")
+}
+
+enum BreakerAction {
+  BLOCK_ALL_ORIGINATIONS
+  BLOCK_PARTNER_ORIGINATIONS
+  FREEZE_ORIGINATIONS
+  TIGHTEN_TERMS
+  REQUIRE_MANUAL_APPROVAL
+  OPEN_INCIDENT
+
+  @@map("breaker_action")
+}
+
+enum BreakerScope {
+  GLOBAL
+  PARTNER
+  POOL
+
+  @@map("breaker_scope")
+}
+
+enum BreakerIncidentStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+
+  @@map("breaker_incident_status")
+}
+
+/// One record per trigger firing. Cleared when resolved.
+model BreakerIncident {
+  id              String                @id @default(uuid()) @db.Uuid
+  trigger         BreakerTrigger
+  scope           BreakerScope
+  partnerId       String?               @map("partner_id") @db.Uuid
+  metricValue     Float                 @map("metric_value")
+  threshold       Float
+  actionsApplied  BreakerAction[]       @map("actions_applied")
+  status          BreakerIncidentStatus @default(OPEN)
+  acknowledgedAt  DateTime?             @map("acknowledged_at")
+  acknowledgedBy  String?               @map("acknowledged_by")
+  resolvedAt      DateTime?             @map("resolved_at")
+  resolvedBy      String?               @map("resolved_by")
+  createdAt       DateTime              @default(now()) @map("created_at")
+  updatedAt       DateTime              @updatedAt @map("updated_at")
+
+  auditLogs BreakerAuditLog[]
+
+  @@index([trigger, status])
+  @@index([partnerId, status])
+  @@map("breaker_incidents")
+}
+
+/// Immutable append-only audit trail for every breaker event.
+model BreakerAuditLog {
+  id          String         @id @default(uuid()) @db.Uuid
+  incidentId  String?        @map("incident_id") @db.Uuid
+  trigger     BreakerTrigger?
+  action      BreakerAction?
+  scope       BreakerScope
+  partnerId   String?        @map("partner_id") @db.Uuid
+  metricValue Float?         @map("metric_value")
+  threshold   Float?
+  operator    String         @default("system")
+  note        String?
+  createdAt   DateTime       @default(now()) @map("created_at")
+
+  incident BreakerIncident? @relation(fields: [incidentId], references: [id])
+
+  @@index([trigger, createdAt])
+  @@index([partnerId, createdAt])
+  @@map("breaker_audit_logs")
+}
+
+/// Time-bound admin override that suppresses a specific trigger.
+model BreakerOverride {
+  id          String         @id @default(uuid()) @db.Uuid
+  trigger     BreakerTrigger
+  scope       BreakerScope
+  partnerId   String?        @map("partner_id") @db.Uuid
+  reason      String
+  operator    String
+  expiresAt   DateTime       @map("expires_at")
+  liftedAt    DateTime?      @map("lifted_at")
+  liftedBy    String?        @map("lifted_by")
+  createdAt   DateTime       @default(now()) @map("created_at")
+
+  @@index([trigger, expiresAt])
+  @@index([partnerId, expiresAt])
+  @@map("breaker_overrides")
+}

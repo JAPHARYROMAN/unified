@@ -1,0 +1,31 @@
+{
+  "name": "unified-protocol",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Unified lending protocol contracts for Polygon built with Hardhat + TypeScript",
+  "license": "MIT",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "coverage": "hardhat coverage",
+    "deploy:amoy": "hardhat run scripts/deploy.ts --network amoy",
+    "deploy:polygon": "hardhat run scripts/deploy.ts --network polygon",
+    "clean": "hardhat clean",
+    "e2e": "ts-node e2e/run-smoke.ts",
+    "deploy:testnet": "hardhat run scripts/deploy-testnet.ts --network amoy",
+    "deploy:testnet:base-sepolia": "hardhat run scripts/deploy-testnet.ts --network baseSepolia",
+    "execute-testnet-timelock": "hardhat run scripts/execute-testnet-timelock.ts --network amoy",
+    "execute-testnet-timelock:base-sepolia": "hardhat run scripts/execute-testnet-timelock.ts --network baseSepolia",
+    "e2e:testnet": "ts-node e2e/run-smoke-testnet.ts",
+    "e2e:v1": "ts-node e2e/run-e2e-v1.ts"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^5.4.0",
+    "dotenv": "^16.6.1",
+    "hardhat": "^2.28.0",
+    "solidity-coverage": "^0.8.12",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  }
+}

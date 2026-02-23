@@ -1,0 +1,504 @@
+{
+  "worstSeedsTop25": [
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 2996012656,
+      "seedIndex": 55,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 1721865320,
+      "seedIndex": 51,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 1033712374,
+      "seedIndex": 52,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 1366089413,
+      "seedIndex": 63,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 2417984336,
+      "seedIndex": 8,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 1697434011,
+      "seedIndex": 9,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 409370566,
+      "seedIndex": 14,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 4104178776,
+      "seedIndex": 15,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 3705780404,
+      "seedIndex": 46,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 4131661425,
+      "seedIndex": 18,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 1726477220,
+      "seedIndex": 19,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 2816357965,
+      "seedIndex": 20,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 669819969,
+      "seedIndex": 59,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 719538853,
+      "seedIndex": 24,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 320074344,
+      "seedIndex": 25,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 896497619,
+      "seedIndex": 27,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 3472853808,
+      "seedIndex": 28,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 1738257976,
+      "seedIndex": 58,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 1228034521,
+      "seedIndex": 32,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 2045371946,
+      "seedIndex": 50,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 73136474,
+      "seedIndex": 37,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 2731251104,
+      "seedIndex": 38,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 3940091981,
+      "seedIndex": 61,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 1442643961,
+      "seedIndex": 43,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    },
+    {
+      "severityScore": 20.857322666666665,
+      "configId": "3cc188642f73",
+      "config": {
+        "seniorAllocationBps": 7500,
+        "juniorCoverageFloorBps": 2000,
+        "defaultRatePct": 12,
+        "correlation": 0.4,
+        "recoveryRate": 0.3,
+        "seniorPriorityWindowHours": 12
+      },
+      "profile": "SLOW",
+      "pathSeed": 4175708531,
+      "seedIndex": 45,
+      "seniorImpairmentPct": 0,
+      "juniorDepleted": false,
+      "liquiditySpiralSeverity": 0.31363199999999997,
+      "redemptionBacklog": 0.4156021333333333,
+      "idleCapitalRatio": 0.33
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-02-23T17:26:39.681Z",
+  "commitHash": "UNBORN_HEAD",
+  "gitState": "NO_COMMITS_YET",
+  "runId": "v121-resim-120260223",
+  "configHash": "70d66aede72d60e2220269db0f4ff11e41a059e9999946fcdc261f7f0737307c",
+  "outputHash": "36976c924ea9d8b8054df6aae039c898d5a2f2b83aae2c3455185d4800b0df66",
+  "compiler": {
+    "language": "TypeScript",
+    "tsconfigPath": "unified-orchestrator/tsconfig.json",
+    "tsconfigSha256": "fc51b8d97601c1c1e0008bd43187bf706d63d9da4058ce769bc90eb87e3b3895"
+  },
+  "engine": "UnifiedPoolTranched-v1.2.1",
+  "runtime": {
+    "node": "v22.13.1",
+    "platform": "win32"
+  },
+  "pathsPerConfig": 5000,
+  "configCount": 9450,
+  "totalPathEvaluations": 141750000
+}
