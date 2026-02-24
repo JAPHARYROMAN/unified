@@ -644,6 +644,12 @@ enum BreakerTrigger {
   POOL_NAV_DRAWDOWN_7D
   JUNIOR_TRANCHE_DEPLETION
   SENIOR_TRANCHE_DRAWDOWN
+  INVARIANT_FAILURE
+  NAV_PARITY_BREACH
+  STRESS_MODE_ACTIVE
+  COVERAGE_WARNING
+  SUBORDINATION_WARNING
+  POLLER_RPC_ERROR
 
   @@map("breaker_trigger")
 }
@@ -718,6 +724,83 @@ model BreakerAuditLog {
   @@index([trigger, createdAt])
   @@index([partnerId, createdAt])
   @@map("breaker_audit_logs")
+}
+
+// ─── Invariant Poller ───
+
+/// Per-block invariant poll record — one row per (poolId, blockNumber).
+model InvariantPollRecord {
+  id                   String   @id @default(cuid())
+  poolId               String   @map("pool_id")
+  blockNumber          BigInt   @map("block_number")
+  blockHash            String   @map("block_hash")
+  polledAt             DateTime @map("polled_at")
+
+  invariantOk          Boolean  @map("invariant_ok")
+  invariantCode        Int      @map("invariant_code")
+  paused               Boolean
+  stressMode           Boolean  @map("stress_mode")
+  seniorPriorityActive Boolean  @map("senior_priority_active")
+
+  navParityOk          Boolean  @map("nav_parity_ok")
+  navParityDeltaUsdc   BigInt   @default(0) @map("nav_parity_delta_usdc")
+
+  alertEmitted         Boolean  @default(false) @map("alert_emitted")
+  alertSeverity        String?  @map("alert_severity")
+
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  @@index([poolId, blockNumber])
+  @@index([invariantOk])
+  @@map("invariant_poll_records")
+}
+
+// ─── Daily Recon Artifact ───
+
+/// Daily balance-sheet reconciliation artifact — one row per (poolId, reconDate).
+/// v1.2.1: split invariant model (INV-CASH + INV-CLAIMS). Mixed identity deprecated.
+model DailyReconArtifact {
+  id                          String   @id @default(cuid())
+  reconDate                   DateTime @unique @map("recon_date") @db.Date
+  poolId                      String   @map("pool_id")
+  snapshotBlock               BigInt   @map("snapshot_block")
+  snapshotBlockHash           String   @map("snapshot_block_hash")
+
+  /// Raw inputs
+  srVirtualBalance            BigInt   @map("sr_virtual_balance")
+  jrVirtualBalance            BigInt   @map("jr_virtual_balance")
+  principalOutstanding        BigInt   @map("principal_outstanding")
+  totalPrincipalAllocated     BigInt   @map("total_principal_allocated")
+  totalPrincipalRepaidToPool  BigInt   @map("total_principal_repaid_to_pool")
+  usdcBalance                 BigInt   @map("usdc_balance")
+  totalBadDebt                BigInt   @map("total_bad_debt")
+
+  /// INV-CASH: sr.vb + jr.vb == usdcBalance
+  cashLhs                     BigInt   @map("cash_lhs")
+  cashRhs                     BigInt   @map("cash_rhs")
+  cashOk                      Boolean  @map("cash_ok")
+
+  /// INV-CLAIMS: principalOutstanding == allocated - repaid - badDebt
+  claimsLhs                   BigInt   @map("claims_lhs")
+  claimsRhs                   BigInt   @map("claims_rhs")
+  claimsOk                    Boolean  @map("claims_ok")
+
+  /// cashOk && claimsOk
+  reconOk                     Boolean  @map("recon_ok")
+
+  srNavParityOk               Boolean  @map("sr_nav_parity_ok")
+  jrNavParityOk               Boolean  @map("jr_nav_parity_ok")
+  srParityDeltaUsdc           BigInt   @map("sr_parity_delta_usdc")
+  jrParityDeltaUsdc           BigInt   @map("jr_parity_delta_usdc")
+
+  signedBy                    String   @map("signed_by")
+  signatureHex                String   @map("signature_hex")
+
+  createdAt                   DateTime @default(now()) @map("created_at")
+
+  @@index([poolId, reconDate])
+  @@index([reconOk])
+  @@map("daily_recon_artifacts")
 }
 
 /// Time-bound admin override that suppresses a specific trigger.

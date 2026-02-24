@@ -10,6 +10,7 @@ import { ChainActionModule } from "./modules/chain-action";
 import { GuardrailModule } from "./modules/guardrail";
 import { OpsModule } from "./modules/ops";
 import { FiatModule } from "./modules/fiat/fiat.module";
+import { TrancheModule } from "./modules/tranche/tranche.module";
 import { RequestLoggerMiddleware } from "./common/middleware/request-logger.middleware";
 
 @Module({
@@ -30,6 +31,7 @@ import { RequestLoggerMiddleware } from "./common/middleware/request-logger.midd
     GuardrailModule,
     OpsModule,
     FiatModule,
+    TrancheModule,
   ],
   providers: [
     {

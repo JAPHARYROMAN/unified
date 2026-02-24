@@ -134,4 +134,27 @@ export const TRIGGER_CATALOGUE: TriggerDefinition[] = [
     ],
     threshold: 0.02,
   },
+  // ── v1.2.1 monitoring triggers ─────────────────────────────────────────────
+  {
+    trigger: BreakerTrigger.JUNIOR_TRANCHE_DEPLETION,
+    description: "Junior tranche fully depleted (subordinationBps == 0)",
+    severity: "CRITICAL",
+    scope: BreakerScope.POOL,
+    actions: [
+      BreakerAction.BLOCK_ALL_ORIGINATIONS,
+      BreakerAction.OPEN_INCIDENT,
+    ],
+    threshold: 0,
+  },
+  {
+    trigger: BreakerTrigger.SENIOR_TRANCHE_DRAWDOWN,
+    description: "Senior tranche absorbed losses (badDebt > 0)",
+    severity: "CRITICAL",
+    scope: BreakerScope.POOL,
+    actions: [
+      BreakerAction.BLOCK_ALL_ORIGINATIONS,
+      BreakerAction.OPEN_INCIDENT,
+    ],
+    threshold: 0,
+  },
 ];
