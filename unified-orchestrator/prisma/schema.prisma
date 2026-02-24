@@ -820,3 +820,56 @@ model BreakerOverride {
   @@index([partnerId, expiresAt])
   @@map("breaker_overrides")
 }
+
+model InvariantCheck {
+  id            String   @id @default(cuid())
+  blockNumber   BigInt
+  contract      String
+  cashOk        Boolean
+  claimsOk      Boolean
+  violationCode Int?
+  txHash        String?
+  createdAt     DateTime @default(now())
+
+  @@index([blockNumber])
+  @@index([contract])
+}
+
+model DailyReconArtifactV2 {
+  id                      String   @id @default(cuid())
+  date                    DateTime
+
+  // Cash identity
+  cashLhs                 BigInt
+  cashRhs                 BigInt
+  cashOk                  Boolean
+
+  // Claims identity
+  claimsLhs               BigInt
+  claimsRhs               BigInt
+  claimsOk                Boolean
+
+  reconOk                 Boolean
+
+  // Cryptographic integrity
+  artifactHash            String
+  signature               String
+
+  createdAt               DateTime @default(now())
+
+  @@unique([date])
+  @@index([reconOk])
+}
+
+model AlertEvent {
+  id          String   @id @default(cuid())
+  severity    String   // P0, P1, P2
+  type        String   // RECON_CASH_IDENTITY_BREACH, etc
+  payload     Json
+  resolved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  resolvedAt  DateTime?
+
+  @@index([severity])
+  @@index([resolved])
+}
